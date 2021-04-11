@@ -1,4 +1,5 @@
 import axiosIns from '@/libs/axios'
+import router from '@/router'
 
 export default {
   namespaced: true,
@@ -11,10 +12,20 @@ export default {
       axiosIns.defaults.headers.common.Authorization = `Bearer ${payload.token}`
       state.user = payload
     },
+    handleExpiredToken(state) {
+      localStorage.removeItem('_secret')
+      state.user = {
+        usuario: null,
+      }
+      router.push('/login')
+    },
   },
   actions: {
     handleLogin({ commit }, payload) {
       commit('handleLogin', payload)
+    },
+    handleExpiredToken({ commit }) {
+      commit('handleExpiredToken')
     },
   },
 }

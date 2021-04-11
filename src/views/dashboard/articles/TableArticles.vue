@@ -18,7 +18,7 @@
           <label class="mr-1">Buscar</label>
           <b-form-input
             v-model="searchTerm"
-            placeholder="Ingresar campo ..."
+            placeholder="......."
             type="text"
             class="d-inline-block"
           />
@@ -28,6 +28,7 @@
 
     <!-- table -->
     <vue-good-table
+      mode="remote"
       :columns="columns"
       :rows="rows"
       :rtl="direction"
@@ -37,16 +38,33 @@
         externalQuery: searchTerm }"
       :pagination-options="{
         enabled: true,
-        perPage:pageLength
+        perPage: serverParams.perPage
       }"
+      :total-rows="totalRecords"
+      @on-page-change="onPageChange"
     >
+      <div
+        slot="emptystate"
+        class="text-center"
+      >
+        <small>
+          No se encontraron resultados
+        </small>
+      </div>
       <template
         slot="table-row"
         slot-scope="props"
       >
 
+        <!-- Column: Status -->
+        <span v-if="props.column.field === 'activo'">
+          <b-badge :variant="props.row.activo ? 'light-success' : 'light-danger'">
+            {{ props.row.activo ? 'Activo' : 'Desactivo' }}
+          </b-badge>
+        </span>
+
         <!-- Column: Action -->
-        <span v-if="props.column.field === 'action'">
+        <span v-else-if="props.column.field === 'action'">
           <span>
             <b-dropdown
               variant="link"
@@ -95,7 +113,7 @@
               Listar
             </span>
             <b-form-select
-              v-model="pageLength"
+              v-model="serverParams.perPage"
               :options="['3','5','10']"
               class="mx-1"
               @input="(value)=>props.perPageChanged({currentPerPage:value})"
@@ -105,8 +123,8 @@
           <div>
             <b-pagination
               :value="1"
-              :total-rows="props.total"
-              :per-page="pageLength"
+              :total-rows="totalRecords"
+              :per-page="serverParams.perPage"
               first-number
               last-number
               align="right"
@@ -136,8 +154,9 @@
 </template>
 
 <script>
+import { inject } from '@vue/composition-api'
 import {
-  BPagination, BFormGroup, BFormInput, BFormSelect, BDropdown, BDropdownItem, VBModal, BButton,
+  BPagination, BFormGroup, BFormInput, BFormSelect, BDropdown, BDropdownItem, VBModal, BButton, BBadge,
 } from 'bootstrap-vue'
 import Ripple from 'vue-ripple-directive'
 import { VueGoodTable } from 'vue-good-table'
@@ -154,6 +173,7 @@ export default {
     BDropdown,
     BDropdownItem,
     BButton,
+    BBadge,
   },
   directives: {
     'b-modal': VBModal,
@@ -161,28 +181,65 @@ export default {
   },
   data() {
     return {
-      pageLength: 3,
       dir: false,
       columns: [
         {
           label: 'Acción',
           field: 'action',
-          width: '125px',
+          width: '85px',
+          thClass: 'td-size-sm',
         },
         {
-          label: 'Name',
-          field: 'first_name',
+          label: 'Nombre',
+          field: 'nombre',
+          tdClass: 'td-size-sm align-middle',
+          thClass: 'td-size-sm',
         },
         {
-          label: 'Date',
-          field: 'last_name',
+          label: 'Tipo',
+          field: 'nombreTipoProducto',
+          tdClass: 'td-size-sm align-middle',
+          thClass: 'td-size-sm',
         },
         {
-          label: 'Email',
-          field: 'email',
+          label: 'Unidad',
+          field: 'nombreGrupoUnidad',
+          tdClass: 'td-size-sm align-middle',
+          thClass: 'td-size-sm',
+        },
+        {
+          label: 'Precio Venta',
+          field: 'precioVenta',
+          tdClass: 'td-size-sm align-middle text-right',
+          thClass: 'td-size-sm',
+          formatFn: value => `S/. ${value.toFixed(2)}`,
+        },
+        {
+          label: 'Precio min. Venta',
+          field: 'precioMinimoVenta',
+          tdClass: 'td-size-sm align-middle text-right',
+          thClass: 'td-size-sm',
+          formatFn: value => `S/. ${value.toFixed(2)}`,
+        },
+        {
+          label: 'Stock min.',
+          field: 'stockMinimo',
+          tdClass: 'td-size-sm align-middle text-right',
+          thClass: 'td-size-sm',
+        },
+        {
+          label: 'Stock max.',
+          field: 'stockMaximo',
+          tdClass: 'td-size-sm align-middle text-right',
+          thClass: 'td-size-sm',
+        },
+        {
+          label: 'Estado',
+          field: 'activo',
+          tdClass: 'td-size-sm align-middle text-center',
+          thClass: 'td-size-sm',
         },
       ],
-      rows: [],
       searchTerm: '',
     }
   },
@@ -198,5 +255,27 @@ export default {
       return this.dir
     },
   },
+  setup() {
+    const articles = inject('articles')
+    const serverParams = inject('serverParams')
+    const totalRecords = inject('totalRecords')
+    const onPageChange = inject('onPageChange')
+    return {
+      rows: articles,
+      serverParams,
+      totalRecords,
+      onPageChange,
+    }
+  },
 }
 </script>
+
+<style lang="scss">
+  th span,
+  td span {
+    font-size: 12px !important;
+  }
+  [dir] .vgt-table.condensed td, [dir] .vgt-table.condensed th.vgt-row-header {
+    padding: 0.1em 0.4em;
+  }
+</style>

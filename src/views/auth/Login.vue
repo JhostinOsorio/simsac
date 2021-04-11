@@ -116,7 +116,7 @@
               <b-form-group>
                 <b-form-checkbox
                   id="remember-me"
-                  v-model="sendLoading"
+                  v-model="status"
                   name="checkbox-1"
                 >
                   Recuerdame

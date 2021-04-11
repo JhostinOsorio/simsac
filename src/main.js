@@ -34,6 +34,17 @@ new Vue({
   created() {
     const secret = JSON.parse(localStorage.getItem('_secret'))
     if (secret) this.$store.commit('auth/handleLogin', secret)
+    this.$http.interceptors.response.use(
+      response => response,
+      error => {
+        if (error.response.status === 401) {
+          if (window.location.pathname !== '/login') {
+            this.$store.dispatch('auth/handleExpiredToken')
+          }
+        }
+        return Promise.reject(error)
+      },
+    )
   },
   render: h => h(App),
 }).$mount('#app')
