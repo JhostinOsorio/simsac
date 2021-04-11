@@ -1,13 +1,24 @@
 <template>
   <div>
     <!-- search input -->
-    <div class="custom-search d-flex justify-content-end">
+    <div class="custom-search d-flex justify-content-between">
+      <div
+        class="d-flex align-items-start"
+      >
+        <b-button
+          v-ripple.400="'rgba(113, 102, 240, 0.15)'"
+          v-b-modal.modal-article
+          variant="primary"
+        >
+          Nuevo
+        </b-button>
+      </div>
       <b-form-group>
         <div class="d-flex align-items-center">
           <label class="mr-1">Buscar</label>
           <b-form-input
             v-model="searchTerm"
-            placeholder="Search"
+            placeholder="Ingresar campo ..."
             type="text"
             class="d-inline-block"
           />
@@ -17,7 +28,6 @@
 
     <!-- table -->
     <vue-good-table
-      compactMode
       :columns="columns"
       :rows="rows"
       :rtl="direction"
@@ -127,8 +137,9 @@
 
 <script>
 import {
-  BPagination, BFormGroup, BFormInput, BFormSelect, BDropdown, BDropdownItem,
+  BPagination, BFormGroup, BFormInput, BFormSelect, BDropdown, BDropdownItem, VBModal, BButton,
 } from 'bootstrap-vue'
+import Ripple from 'vue-ripple-directive'
 import { VueGoodTable } from 'vue-good-table'
 import store from '@/store/index'
 
@@ -142,6 +153,11 @@ export default {
     BFormSelect,
     BDropdown,
     BDropdownItem,
+    BButton,
+  },
+  directives: {
+    'b-modal': VBModal,
+    Ripple,
   },
   data() {
     return {

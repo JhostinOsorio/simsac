@@ -5,7 +5,7 @@
   >
     <b-form @submit.prevent="handleSubmit(sendForm)">
       <b-modal
-        id="modal-primary"
+        id="modal-article"
         ok-only
         ok-title="Accept"
         modal-class="modal-primary"
