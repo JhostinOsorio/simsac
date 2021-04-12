@@ -3,7 +3,6 @@
     <modal-article />
     <b-card>
       <table-articles />
-      <!-- <table-test /> -->
     </b-card>
   </div>
 </template>
@@ -14,7 +13,6 @@ import { BCard } from 'bootstrap-vue'
 import ModalArticle from './ModalArticle.vue'
 import TableArticles from './TableArticles.vue'
 import useArticles from './useArticles'
-// import TableTest from './TableTest.vue'
 
 export default {
   name: 'Articles',
@@ -22,7 +20,6 @@ export default {
     BCard,
     TableArticles,
     ModalArticle,
-    // TableTest,
   },
   setup() {
     const articles = ref([])
@@ -34,12 +31,17 @@ export default {
       perPage: 3,
     })
     const totalRecords = ref(0)
-    const { getArticles } = useArticles()
+    const { getArticles, getTipoProducto } = useArticles()
 
-    const getData = async () => {
+    const getDataArticles = async () => {
       const { data } = await getArticles(serverParams.value)
       articles.value = data
       totalRecords.value = data.length
+    }
+
+    const getDataTipoProducto = async () => {
+      const { data } = await getTipoProducto()
+      console.log(data)
     }
 
     const updateParams = newProps => {
@@ -47,29 +49,29 @@ export default {
     }
 
     const onPerPageChange = params => {
+      console.log(params)
       updateParams({ perPage: params.currentPerPage })
-      getData()
+      getDataArticles()
     }
 
     const onPageChange = params => {
       updateParams({ page: params.currentPage })
-      getData()
+      getDataArticles()
     }
 
-    getData()
-    // // load items is what brings back the rows from server
-    // loadItems() {
-    //   getFromServer(this.serverParams).then(response => {
-    //      this.totalRecords = response.totalRecords;
-    //      this.rows = response.rows;
-    //   });
-    // }
+    const onColumnFilter = params => {
+      console.log(params)
+    }
+
+    getDataArticles()
 
     provide('articles', articles)
     provide('totalRecords', totalRecords)
     provide('serverParams', serverParams)
     provide('onPerPageChange', onPerPageChange)
     provide('onPageChange', onPageChange)
+    provide('onColumnFilter', onColumnFilter)
+    provide('getDataTipoProducto', getDataTipoProducto)
   },
 }
 </script>

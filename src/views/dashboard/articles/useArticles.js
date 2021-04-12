@@ -16,8 +16,25 @@ const useArticles = () => {
     }
     return info
   }
+
+  const getTipoProducto = async () => {
+    const info = {
+      data: null,
+      error: null,
+    }
+    try {
+      const response = await axiosIns.get('/combo/tipoproducto/1')
+      if (response.status !== 200) throw new Error(response)
+      info.data = response.data
+    } catch (error) {
+      info.error = error
+    }
+    return info
+  }
+
   return {
     getArticles,
+    getTipoProducto,
   }
 }
 

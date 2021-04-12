@@ -42,10 +42,12 @@
       }"
       :total-rows="totalRecords"
       @on-page-change="onPageChange"
+      @on-per-page-change="onPerPageChange"
+      @on-column-filter="onColumnFilter"
     >
       <div
         slot="emptystate"
-        class="text-center"
+        class="text-center p-2"
       >
         <small>
           No se encontraron resultados
@@ -259,18 +261,23 @@ export default {
     const articles = inject('articles')
     const serverParams = inject('serverParams')
     const totalRecords = inject('totalRecords')
+    const onPerPageChange = inject('onPerPageChange')
     const onPageChange = inject('onPageChange')
+    const onColumnFilter = inject('onColumnFilter')
     return {
       rows: articles,
       serverParams,
       totalRecords,
+      onPerPageChange,
       onPageChange,
+      onColumnFilter,
     }
   },
 }
 </script>
 
 <style lang="scss">
+  @import '@core/scss/vue/libs/vue-good-table.scss';
   th span,
   td span {
     font-size: 12px !important;
