@@ -3,9 +3,12 @@
     <b-row class="auth-inner m-0">
 
       <!-- Brand logo-->
-      <b-link class="brand-logo">
-        <vuexy-logo />
-        <h2 class="brand-text text-primary ml-1">
+      <b-link class="brand-logo d-flex align-items-center">
+        <b-img
+          :src="require('@/assets/images/logo/ico-simsac.png')"
+          alt="Simsac Perú"
+        />
+        <h2 class="brand-text text-primary ml-1 my-0">
           Simsac Perú
         </h2>
       </b-link>
@@ -164,7 +167,6 @@
 <script>
 /* eslint-disable global-require */
 import { ValidationProvider, ValidationObserver, extend } from 'vee-validate'
-import VuexyLogo from '@core/layouts/components/Logo.vue'
 import {
   BRow, BCol, BLink, BFormGroup, BFormInput, BInputGroupAppend, BInputGroup, BFormCheckbox, BCardText, BCardTitle, BImg, BForm, BButton, BOverlay,
 } from 'bootstrap-vue'
@@ -190,7 +192,6 @@ export default {
     BForm,
     BButton,
     BOverlay,
-    VuexyLogo,
     ValidationProvider,
     ValidationObserver,
   },
