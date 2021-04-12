@@ -93,10 +93,6 @@ export default {
       getDataArticles()
     }
 
-    const onColumnFilter = params => {
-      console.log(params)
-    }
-
     getDataArticles()
 
     provide('articles', articles)
@@ -106,7 +102,6 @@ export default {
     provide('serverParams', serverParams)
     provide('onPerPageChange', onPerPageChange)
     provide('onPageChange', onPageChange)
-    provide('onColumnFilter', onColumnFilter)
     provide('getDataProductTypes', getDataProductTypes)
     provide('productTypes', productTypes)
     provide('getDataUnitGroup', getDataUnitGroup)

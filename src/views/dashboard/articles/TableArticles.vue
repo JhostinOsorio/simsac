@@ -44,7 +44,6 @@
       :total-rows="totalRecords"
       @on-page-change="onPageChange"
       @on-per-page-change="onPerPageChange"
-      @on-column-filter="onColumnFilter"
     >
       <div
         slot="emptystate"
@@ -255,7 +254,6 @@ export default {
     const totalRecords = inject('totalRecords')
     const onPerPageChange = inject('onPerPageChange')
     const onPageChange = inject('onPageChange')
-    const onColumnFilter = inject('onColumnFilter')
     const getDataProductTypes = inject('getDataProductTypes')
     const productTypes = inject('productTypes')
     const getDataUnitGroup = inject('getDataUnitGroup')
@@ -274,7 +272,6 @@ export default {
       totalRecords,
       onPerPageChange,
       onPageChange,
-      onColumnFilter,
       openModalArticle,
     }
   },
