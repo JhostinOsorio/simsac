@@ -44,7 +44,10 @@
           />
         </template>
 
-        <b-dropdown-item link-class="d-flex align-items-center">
+        <b-dropdown-item
+          link-class="d-flex align-items-center"
+          @click="handleLogout"
+        >
           <feather-icon
             size="16"
             icon="LogOutIcon"
@@ -83,6 +86,11 @@ export default {
   },
   computed: {
     ...mapState('auth', ['user']),
+  },
+  methods: {
+    handleLogout() {
+      this.$store.dispatch('auth/handleLogout')
+    },
   },
 }
 </script>

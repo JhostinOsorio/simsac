@@ -9,6 +9,7 @@
           v-ripple.400="'rgba(113, 102, 240, 0.15)'"
           v-b-modal.modal-article
           variant="primary"
+          @click="openModalArticle"
         >
           Nuevo
         </b-button>
@@ -189,57 +190,48 @@ export default {
           label: 'Acción',
           field: 'action',
           width: '85px',
-          thClass: 'td-size-sm',
         },
         {
           label: 'Nombre',
           field: 'nombre',
-          tdClass: 'td-size-sm align-middle',
-          thClass: 'td-size-sm',
+          tdClass: 'align-middle',
         },
         {
           label: 'Tipo',
           field: 'nombreTipoProducto',
-          tdClass: 'td-size-sm align-middle',
-          thClass: 'td-size-sm',
+          tdClass: 'align-middle',
         },
         {
           label: 'Unidad',
           field: 'nombreGrupoUnidad',
-          tdClass: 'td-size-sm align-middle',
-          thClass: 'td-size-sm',
+          tdClass: 'align-middle',
         },
         {
           label: 'Precio Venta',
           field: 'precioVenta',
-          tdClass: 'td-size-sm align-middle text-right',
-          thClass: 'td-size-sm',
+          tdClass: 'align-middle text-right',
           formatFn: value => `S/. ${value.toFixed(2)}`,
         },
         {
           label: 'Precio min. Venta',
           field: 'precioMinimoVenta',
-          tdClass: 'td-size-sm align-middle text-right',
-          thClass: 'td-size-sm',
+          tdClass: 'align-middle text-right',
           formatFn: value => `S/. ${value.toFixed(2)}`,
         },
         {
           label: 'Stock min.',
           field: 'stockMinimo',
-          tdClass: 'td-size-sm align-middle text-right',
-          thClass: 'td-size-sm',
+          tdClass: 'align-middle text-right',
         },
         {
           label: 'Stock max.',
           field: 'stockMaximo',
-          tdClass: 'td-size-sm align-middle text-right',
-          thClass: 'td-size-sm',
+          tdClass: 'align-middle text-right',
         },
         {
           label: 'Estado',
           field: 'activo',
-          tdClass: 'td-size-sm align-middle text-center',
-          thClass: 'td-size-sm',
+          tdClass: 'align-middle text-center',
         },
       ],
       searchTerm: '',
@@ -264,6 +256,18 @@ export default {
     const onPerPageChange = inject('onPerPageChange')
     const onPageChange = inject('onPageChange')
     const onColumnFilter = inject('onColumnFilter')
+    const getDataProductTypes = inject('getDataProductTypes')
+    const productTypes = inject('productTypes')
+    const getDataUnitGroup = inject('getDataUnitGroup')
+    const unitGroup = inject('unitGroup')
+
+    const openModalArticle = async () => {
+      const { data: dataProductTypes } = await getDataProductTypes()
+      const { data: dataUnitGroup } = await getDataUnitGroup()
+      productTypes.value = dataProductTypes
+      unitGroup.value = dataUnitGroup
+    }
+
     return {
       rows: articles,
       serverParams,
@@ -271,6 +275,7 @@ export default {
       onPerPageChange,
       onPageChange,
       onColumnFilter,
+      openModalArticle,
     }
   },
 }

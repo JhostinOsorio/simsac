@@ -17,7 +17,7 @@ const useArticles = () => {
     return info
   }
 
-  const getTipoProducto = async () => {
+  const getProductTypes = async () => {
     const info = {
       data: null,
       error: null,
@@ -32,9 +32,41 @@ const useArticles = () => {
     return info
   }
 
+  const getUnitGroup = async () => {
+    const info = {
+      data: null,
+      error: null,
+    }
+    try {
+      const response = await axiosIns.get('/combo/grupounidad/0')
+      if (response.status !== 200) throw new Error(response)
+      info.data = response.data
+    } catch (error) {
+      info.error = error
+    }
+    return info
+  }
+
+  const getUnitsByGroup = async groupId => {
+    const info = {
+      data: null,
+      error: null,
+    }
+    try {
+      const response = await axiosIns.get(`/combo/grupounidad/${groupId}`)
+      if (response.status !== 200) throw new Error(response)
+      info.data = response.data
+    } catch (error) {
+      info.error = error
+    }
+    return info
+  }
+
   return {
     getArticles,
-    getTipoProducto,
+    getProductTypes,
+    getUnitGroup,
+    getUnitsByGroup,
   }
 }
 

@@ -12,6 +12,8 @@ import './global-components'
 // 3rd party plugins
 import '@/libs/portal-vue'
 import '@/libs/toastification'
+import '@/libs/vue-select'
+import '@/libs/sweet-alerts'
 
 // BSV Plugin Registration
 Vue.use(ToastPlugin)

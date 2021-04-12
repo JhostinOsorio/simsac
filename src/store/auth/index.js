@@ -19,6 +19,13 @@ export default {
       }
       router.push('/login')
     },
+    handleLogout(state) {
+      localStorage.removeItem('_secret')
+      state.user = {
+        usuario: null,
+      }
+      router.push('/login')
+    },
   },
   actions: {
     handleLogin({ commit }, payload) {
@@ -26,6 +33,9 @@ export default {
     },
     handleExpiredToken({ commit }) {
       commit('handleExpiredToken')
+    },
+    handleLogout({ commit }) {
+      commit('handleLogout')
     },
   },
 }
