@@ -62,11 +62,43 @@ const useArticles = () => {
     return info
   }
 
+  const getFeatures = async () => {
+    const info = {
+      data: null,
+      error: null,
+    }
+    try {
+      const response = await axiosIns.get('/combo/caracteristica/1')
+      if (response.status !== 200) throw new Error(response)
+      info.data = response.data
+    } catch (error) {
+      info.error = error
+    }
+    return info
+  }
+
+  const getValuesByFeature = async featureId => {
+    const info = {
+      data: null,
+      error: null,
+    }
+    try {
+      const response = await axiosIns.get(`/comboadv/dcaracteristica/1/${featureId}`)
+      if (response.status !== 200) throw new Error(response)
+      info.data = response.data
+    } catch (error) {
+      info.error = error
+    }
+    return info
+  }
+
   return {
     getArticles,
     getProductTypes,
     getUnitGroup,
     getUnitsByGroup,
+    getFeatures,
+    getValuesByFeature,
   }
 }
 

@@ -1,6 +1,7 @@
 <template>
   <div>
     <modal-article />
+    <modal-search-article />
     <b-card>
       <table-articles />
     </b-card>
@@ -11,6 +12,7 @@
 import { ref, provide } from '@vue/composition-api'
 import { BCard } from 'bootstrap-vue'
 import ModalArticle from './ModalArticle.vue'
+import ModalSearchArticle from './ModalSearchArticle.vue'
 import TableArticles from './TableArticles.vue'
 import useArticles from './useArticles'
 
@@ -18,16 +20,14 @@ export default {
   name: 'Articles',
   components: {
     BCard,
-    TableArticles,
     ModalArticle,
+    ModalSearchArticle,
+    TableArticles,
   },
   setup() {
+    const loadingArticles = ref(false)
     const articles = ref([])
-    const productTypes = ref([])
-    const unitGroup = ref([])
-    const inventoryUnit = ref([])
-    const unitSale = ref([])
-    const initialSendArticles = {
+    const initialArticle = {
       sku: '',
       productType: null,
       articleName: '',
@@ -41,27 +41,42 @@ export default {
       minimumSalePrice: null,
       minimumStock: null,
       maximumStock: null,
+      features: [],
     }
-    const sendArticles = ref({ ...initialSendArticles })
-    const resetSendArticles = () => {
-      sendArticles.value = { ...initialSendArticles }
+    const article = ref({ ...initialArticle })
+    const productTypes = ref([])
+    const unitGroup = ref([])
+    const inventoryUnit = ref([])
+    const unitSale = ref([])
+    const allFeatures = ref([])
+    const allValuesByFeature = ref([])
+
+    const resetArticle = () => {
+      article.value = { ...initialArticle }
     }
     const serverParams = ref({
       columnFilters: {
-
+        field: '',
+        value: '',
       },
       page: 1,
-      perPage: 3,
+      perPage: 10,
     })
     const totalRecords = ref(0)
     const {
-      getArticles, getProductTypes, getUnitGroup, getUnitsByGroup,
+      getArticles, getProductTypes, getUnitGroup, getUnitsByGroup, getFeatures, getValuesByFeature,
     } = useArticles()
 
     const getDataArticles = async () => {
-      const { data } = await getArticles(serverParams.value)
-      articles.value = data
-      totalRecords.value = data.length
+      loadingArticles.value = true
+      const { data, error } = await getArticles(serverParams.value)
+      if (error) {
+        console.log('error')
+      } else {
+        articles.value = data
+        totalRecords.value = 32 // data.length * 5
+      }
+      loadingArticles.value = false
     }
 
     const getDataProductTypes = async () => {
@@ -79,26 +94,39 @@ export default {
       return info
     }
 
+    const getDataFeatures = async () => {
+      const info = await getFeatures()
+      return info
+    }
+
+    const getDataValuesByFeature = async featureId => {
+      const info = await getValuesByFeature(featureId)
+      return info
+    }
+
     const updateParams = newProps => {
-      serverParams.value = { ...serverParams.value, newProps }
+      serverParams.value = { ...serverParams.value, ...newProps }
     }
 
     const onPerPageChange = params => {
-      updateParams({ perPage: params.currentPerPage })
+      updateParams({ perPage: Number(params.currentPerPage) })
+      console.log(serverParams.value)
       getDataArticles()
     }
 
     const onPageChange = params => {
-      updateParams({ page: params.currentPage })
+      updateParams({ page: Number(params.currentPage) })
+      console.log(serverParams.value)
       getDataArticles()
     }
 
     getDataArticles()
 
     provide('articles', articles)
+    provide('loadingArticles', loadingArticles)
     provide('totalRecords', totalRecords)
-    provide('sendArticles', sendArticles)
-    provide('resetSendArticles', resetSendArticles)
+    provide('article', article)
+    provide('resetArticle', resetArticle)
     provide('serverParams', serverParams)
     provide('onPerPageChange', onPerPageChange)
     provide('onPageChange', onPageChange)
@@ -109,10 +137,14 @@ export default {
     provide('getDataUnitsByGroup', getDataUnitsByGroup)
     provide('inventoryUnit', inventoryUnit)
     provide('unitSale', unitSale)
+    provide('getDataFeatures', getDataFeatures)
+    provide('allFeatures', allFeatures)
+    provide('getDataValuesByFeature', getDataValuesByFeature)
+    provide('allValuesByFeature', allValuesByFeature)
   },
 }
 </script>
 
-<style>
-
+<style lang="scss">
+  @import '@core/scss/vue/libs/vue-select.scss';
 </style>

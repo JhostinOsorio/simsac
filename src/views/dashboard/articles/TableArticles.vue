@@ -1,7 +1,7 @@
 <template>
   <div>
     <!-- search input -->
-    <div class="custom-search d-flex justify-content-between">
+    <div class="custom-search d-flex justify-content-between mb-1 flex-wrap">
       <div
         class="d-flex align-items-start"
       >
@@ -14,17 +14,15 @@
           Nuevo
         </b-button>
       </div>
-      <b-form-group>
-        <div class="d-flex align-items-center">
-          <label class="mr-1">Buscar</label>
-          <b-form-input
-            v-model="searchTerm"
-            placeholder="......."
-            type="text"
-            class="d-inline-block"
-          />
-        </div>
-      </b-form-group>
+      <div>
+        <b-button
+          v-ripple.400="'rgba(113, 102, 240, 0.15)'"
+          v-b-modal.modal-search-article
+          variant="primary"
+        >
+          Buscar Por ...
+        </b-button>
+      </div>
     </div>
 
     <!-- table -->
@@ -33,10 +31,11 @@
       :columns="columns"
       :rows="rows"
       :rtl="direction"
+      :is-loading="loadingArticles"
       class="vgt-table condensed"
       :search-options="{
         enabled: true,
-        externalQuery: searchTerm }"
+        externalQuery: serverParams.columnFilters }"
       :pagination-options="{
         enabled: true,
         perPage: serverParams.perPage
@@ -45,11 +44,18 @@
       @on-page-change="onPageChange"
       @on-per-page-change="onPerPageChange"
     >
+      <template slot="loadingContent">
+        <img
+          width="30"
+          src="@/assets/images/loaders/circles.svg"
+          class="m-0 p-0"
+        >
+      </template>
       <div
         slot="emptystate"
         class="text-center p-2"
       >
-        <small>
+        <small v-if="!loadingArticles">
           No se encontraron resultados
         </small>
       </div>
@@ -116,16 +122,16 @@
             </span>
             <b-form-select
               v-model="serverParams.perPage"
-              :options="['3','5','10']"
+              :options="['3','5','10','20']"
               class="mx-1"
               @input="(value)=>props.perPageChanged({currentPerPage:value})"
             />
-            <span class="text-nowrap"> registros por página</span>
+            <span class="text-nowrap"> por página</span>
           </div>
           <div>
             <b-pagination
               :value="1"
-              :total-rows="totalRecords"
+              :total-rows="props.total"
               :per-page="serverParams.perPage"
               first-number
               last-number
@@ -158,7 +164,7 @@
 <script>
 import { inject } from '@vue/composition-api'
 import {
-  BPagination, BFormGroup, BFormInput, BFormSelect, BDropdown, BDropdownItem, VBModal, BButton, BBadge,
+  BPagination, BFormSelect, BDropdown, BDropdownItem, VBModal, BButton, BBadge,
 } from 'bootstrap-vue'
 import Ripple from 'vue-ripple-directive'
 import { VueGoodTable } from 'vue-good-table'
@@ -169,8 +175,6 @@ export default {
   components: {
     VueGoodTable,
     BPagination,
-    BFormGroup,
-    BFormInput,
     BFormSelect,
     BDropdown,
     BDropdownItem,
@@ -189,51 +193,59 @@ export default {
           label: 'Acción',
           field: 'action',
           width: '85px',
+          thClass: 'align-middle',
         },
         {
           label: 'Nombre',
           field: 'nombre',
+          thClass: 'align-middle',
           tdClass: 'align-middle',
         },
         {
           label: 'Tipo',
           field: 'nombreTipoProducto',
+          thClass: 'align-middle',
           tdClass: 'align-middle',
         },
         {
           label: 'Unidad',
           field: 'nombreGrupoUnidad',
+          thClass: 'align-middle',
           tdClass: 'align-middle',
         },
         {
           label: 'Precio Venta',
           field: 'precioVenta',
+          thClass: 'align-middle',
           tdClass: 'align-middle text-right',
           formatFn: value => `S/. ${value.toFixed(2)}`,
         },
         {
           label: 'Precio min. Venta',
           field: 'precioMinimoVenta',
+          thClass: 'align-middle',
           tdClass: 'align-middle text-right',
           formatFn: value => `S/. ${value.toFixed(2)}`,
         },
         {
           label: 'Stock min.',
           field: 'stockMinimo',
+          thClass: 'align-middle',
           tdClass: 'align-middle text-right',
         },
         {
           label: 'Stock max.',
           field: 'stockMaximo',
+          thClass: 'align-middle',
           tdClass: 'align-middle text-right',
         },
         {
           label: 'Estado',
           field: 'activo',
+          thClass: 'align-middle',
           tdClass: 'align-middle text-center',
         },
       ],
-      searchTerm: '',
     }
   },
   computed: {
@@ -249,6 +261,7 @@ export default {
     },
   },
   setup() {
+    const loadingArticles = inject('loadingArticles')
     const articles = inject('articles')
     const serverParams = inject('serverParams')
     const totalRecords = inject('totalRecords')
@@ -258,15 +271,21 @@ export default {
     const productTypes = inject('productTypes')
     const getDataUnitGroup = inject('getDataUnitGroup')
     const unitGroup = inject('unitGroup')
+    const getDataFeatures = inject('getDataFeatures')
+    const allFeatures = inject('allFeatures')
 
     const openModalArticle = async () => {
       const { data: dataProductTypes } = await getDataProductTypes()
       const { data: dataUnitGroup } = await getDataUnitGroup()
+      const { data: dataFeatures } = await getDataFeatures()
+
       productTypes.value = dataProductTypes
       unitGroup.value = dataUnitGroup
+      allFeatures.value = dataFeatures
     }
 
     return {
+      loadingArticles,
       rows: articles,
       serverParams,
       totalRecords,
