@@ -691,7 +691,7 @@ export default {
     }
 
     const removeFeature = row => {
-      console.log(row)
+      
     }
 
     return {
