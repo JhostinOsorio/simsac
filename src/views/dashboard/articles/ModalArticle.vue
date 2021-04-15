@@ -492,7 +492,6 @@
                       <b-button
                         variant="danger"
                         size="sm"
-                        @click="removeFeature(props.row)"
                       >
                         Remover
                       </b-button>
@@ -690,10 +689,6 @@ export default {
       }
     }
 
-    const removeFeature = row => {
-      
-    }
-
     return {
       article,
       resetArticle,
@@ -708,7 +703,6 @@ export default {
       featureSelected,
       valueSelected,
       addFeature,
-      removeFeature,
     }
   },
 }
