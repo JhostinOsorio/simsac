@@ -199,6 +199,8 @@
                       :dir="$store.state.appConfig.isRTL ? 'rtl' : 'ltr'"
                       label="nombre"
                       :options="inventoryUnit"
+                      :loading="true"
+                      :disabled="disabledSelectInventoryUnit"
                     >
                       <template v-slot:no-options="{ search, searching }">
                         <template v-if="searching">
@@ -236,6 +238,7 @@
                       :dir="$store.state.appConfig.isRTL ? 'rtl' : 'ltr'"
                       label="nombre"
                       :options="unitSale"
+                      :disabled="disabledSelectUnitSale"
                     >
                       <template v-slot:no-options="{ search, searching }">
                         <template v-if="searching">
@@ -433,6 +436,7 @@
                     :dir="$store.state.appConfig.isRTL ? 'rtl' : 'ltr'"
                     label="nombre"
                     :options="allValuesByFeature"
+                    :disabled="disabledSelectValue"
                   >
                     <template v-slot:no-options="{ search, searching }">
                       <template v-if="searching">
@@ -480,7 +484,7 @@
                 >
                   <div
                     slot="emptystate"
-                    class="text-center p-2"
+                    class="text-center p-1"
                   >
                     <small>No hay características</small>
                   </div>
@@ -638,6 +642,8 @@ export default {
     const unitGroup = inject('unitGroup')
     const inventoryUnit = inject('inventoryUnit')
     const unitSale = inject('unitSale')
+    const disabledSelectInventoryUnit = ref(true)
+    const disabledSelectUnitSale = ref(true)
     const getDataUnitsByGroup = inject('getDataUnitsByGroup')
     const allFeatures = inject('allFeatures')
     const getDataValuesByFeature = inject('getDataValuesByFeature')
@@ -645,18 +651,25 @@ export default {
 
     const featureSelected = ref(null)
     const valueSelected = ref(null)
+    const disabledSelectValue = ref(true)
 
     const selectedUnitGroup = async ({ _id }) => {
       article.value.inventoryUnit = null
       article.value.unitSale = null
+      disabledSelectInventoryUnit.value = true
+      disabledSelectUnitSale.value = true
       const { data } = await getDataUnitsByGroup(_id)
+      disabledSelectInventoryUnit.value = false
+      disabledSelectUnitSale.value = false
       inventoryUnit.value = data
       unitSale.value = data
     }
 
     const selectedFeature = async ({ _id }) => {
       valueSelected.value = null
+      disabledSelectValue.value = true
       const { data } = await getDataValuesByFeature(_id)
+      disabledSelectValue.value = false
       allValuesByFeature.value = data
     }
 
@@ -703,6 +716,9 @@ export default {
       featureSelected,
       valueSelected,
       addFeature,
+      disabledSelectInventoryUnit,
+      disabledSelectUnitSale,
+      disabledSelectValue,
     }
   },
 }

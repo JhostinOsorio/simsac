@@ -33,6 +33,11 @@ Vue.config.productionTip = false
 new Vue({
   router,
   store,
+  watch: {
+    $route(to) {
+      if (to.name !== 'login') localStorage.setItem('lastPath', JSON.stringify(to.fullPath))
+    },
+  },
   created() {
     const secret = JSON.parse(localStorage.getItem('_secret'))
     if (secret) this.$store.commit('auth/handleLogin', secret)
@@ -41,6 +46,11 @@ new Vue({
       error => {
         if (error.response.status === 401) {
           if (window.location.pathname !== '/login') {
+            this.$bvToast.toast('Expiro el tiempo de su autenticación. Por favor vuelva a identificarse.', {
+              title: 'Autenticación',
+              variant: 'warning',
+              solid: true,
+            })
             this.$store.dispatch('auth/handleExpiredToken')
           }
         }

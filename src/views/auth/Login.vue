@@ -258,7 +258,9 @@ export default {
               variant: 'success',
             },
           })
-          this.$router.push('/')
+          const lastPath = JSON.parse(localStorage.getItem('lastPath'))
+          if (lastPath) this.$router.push(lastPath)
+          else this.$router.push('/')
         }
       }
     },
